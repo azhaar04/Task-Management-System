@@ -1,5 +1,6 @@
-import { Formik, Form, Field } from "formik";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { produce } from "immer";
+import { useSelector, useDispatch } from "react-redux";
 
 import TaskEditMainPage from "./task-edit-mainpage/task-edit-mainpage";
 import TaskEditList from "./task-edit-list/task-edit-list";
@@ -8,21 +9,31 @@ import AddmMemberPopup from "./task-add-member-popup/add-member-popup";
 import Dates from "./task-dates-popup/dates-popup";
 import CheckListForm from "./task-checklist-form-popup/checklist-form-popup";
 
+import {
+    setBoard,
+    setCurrentBoard,
+    setSelectedTask,
+} from "../../../../redux/board/board.actions";
+
 import "./task-edit.css";
 
-function TaskEdit({
-    selectedTask,
-    selectedTaskIndex,
-    setSelectedTask,
-    setSelectedTaskIndex,
-    boards,
-    setBoard,
-    currentBoard,
-    selectedListIndex,
-    setSelectedListIndex,
-    setCurrentBoard,
-    users,
-}) {
+function TaskEdit() {
+    const dispatch = useDispatch();
+
+    const selectedTask = useSelector(
+        (state) => state.boardReducer.selectedTask
+    );
+    const boards = useSelector((state) => state.boardReducer.boards);
+    const currentBoard = useSelector(
+        (state) => state.boardReducer.currentBoard
+    );
+    const selectedListIndex = useSelector(
+        (state) => state.boardReducer.selectedListIndex
+    );
+    const selectedTaskIndex = useSelector(
+        (state) => state.boardReducer.selectedTaskIndex
+    );
+
     const [showTaskNameRename, setShowTaskNameRename] = useState(false);
     const [showAddMembersForm, setShowAddMembersForm] = useState(false);
     const [showDates, setShowDates] = useState(false);
@@ -30,19 +41,25 @@ function TaskEdit({
 
     const [showCheckListItem, setShowCheckListItem] = useState(false);
 
-    useEffect(() => {}, []);
-
     return (
         <div className="task-edit-popup">
             <div className="task-edit-popup-content">
-                <h2>{selectedTask.taskTitle}</h2>
+                <button
+                    className="close-window"
+                    onClick={() => dispatch(setSelectedTask(null))}>
+                    X
+                </button>
+                <h2
+                    onClick={() => {
+                        console.log(selectedTask);
+                    }}>
+                    {selectedTask.taskTitle}
+                </h2>
 
                 <div
                     className="row"
                     style={{ display: "flex", flexDirection: "row" }}>
                     <TaskEditMainPage
-                        selectedTask={selectedTask}
-                        setSelectedTask={setSelectedTask}
                         showCheckListItem={showCheckListItem}
                         setShowCheckListItem={setShowCheckListItem}
                     />
@@ -58,41 +75,46 @@ function TaskEdit({
                         setShowCheckListForm={setShowCheckListForm}
                     />
                 </div>
-
-                <button
-                    onClick={() => {
-                        const newBoards = JSON.parse(JSON.stringify(boards));
-                        const newCurrentBoard = { ...currentBoard };
-                        const updatedTask = { ...selectedTask };
-
-                        const index = newBoards.findIndex(
-                            (board) => board.id === newCurrentBoard.id
-                        );
-
-                        newBoards[index].lists[selectedListIndex].taskList[
-                            selectedTaskIndex
-                        ] = updatedTask;
-
-                        newCurrentBoard.lists[selectedListIndex].taskList[
-                            selectedTaskIndex
-                        ] = updatedTask;
-
-                        setCurrentBoard(newCurrentBoard);
-                        setBoard(newBoards);
-                        setSelectedTask(null);
-                    }}>
-                    Save Changes
-                </button>
-
-                <button onClick={() => setSelectedTask(null)}>Close</button>
+                <div className="button-container">
+                    <button
+                        onClick={() => {
+                            if (boards) {
+                                const newBoards = produce(boards, (draft) => {
+                                    const index = draft.findIndex(
+                                        (board) => board.id === currentBoard.id
+                                    );
+                                    if (index !== -1) {
+                                        draft[index].lists[
+                                            selectedListIndex
+                                        ].taskList[selectedTaskIndex] = {
+                                            ...selectedTask,
+                                        };
+                                    }
+                                });
+                                dispatch(setBoard(newBoards));
+                            }
+                            if (currentBoard) {
+                                const newCurrentBoard = produce(
+                                    currentBoard,
+                                    (draft) => {
+                                        draft.lists[selectedListIndex].taskList[
+                                            selectedTaskIndex
+                                        ] = { ...selectedTask };
+                                    }
+                                );
+                                dispatch(setCurrentBoard(newCurrentBoard));
+                            }
+                            dispatch(setSelectedTask(null));
+                        }}>
+                        Save Changes
+                    </button>
+                </div>
             </div>
 
             {showTaskNameRename && (
                 <TaskRenamePopup
                     showTaskNameRename={showTaskNameRename}
                     setShowTaskNameRename={setShowTaskNameRename}
-                    selectedTask={selectedTask}
-                    setSelectedTask={setSelectedTask}
                 />
             )}
 
@@ -100,27 +122,17 @@ function TaskEdit({
                 <AddmMemberPopup
                     showAddMembersForm={showAddMembersForm}
                     setShowAddMembersForm={setShowAddMembersForm}
-                    users={users}
-                    selectedTask={selectedTask}
-                    setSelectedTask={setSelectedTask}
                 />
             )}
 
             {showDates && (
-                <Dates
-                    showDates={showDates}
-                    setShowDates={setShowDates}
-                    selectedTask={selectedTask}
-                    setSelectedTask={setSelectedTask}
-                />
+                <Dates showDates={showDates} setShowDates={setShowDates} />
             )}
 
             {showCheckListForm && (
                 <CheckListForm
                     showCheckListForm={showCheckListForm}
                     setShowCheckListForm={setShowCheckListForm}
-                    selectedTask={selectedTask}
-                    setSelectedTask={setSelectedTask}
                 />
             )}
         </div>

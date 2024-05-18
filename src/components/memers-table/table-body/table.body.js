@@ -1,6 +1,7 @@
 import React from "react";
-
-function TableBody({ items, columns }) {
+import { useSelector } from "react-redux";
+function TableBody({ columns }) {
+    const items = useSelector((state) => state.userReducer.users);
     return (
         <tbody>
             {items.map((item, index) => (

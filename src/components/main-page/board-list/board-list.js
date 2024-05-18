@@ -1,113 +1,79 @@
 import { useState } from "react";
 import TaskForm from "./task-form/task.form";
 import TaskEdit from "./task-edit/task-edit";
+import { useSelector, useDispatch } from "react-redux";
+import {
+    setSelectedTask,
+    setSelectedTaskIndex,
+    setSelectedListIndex,
+} from "../../../redux/board/board.actions";
+import "./board-list.css";
 
-function BoardList({ boards, currentBoard, setBoard, setCurrentBoard, users }) {
-    const [selectedTask, setSelectedTask] = useState(null);
-    const [selectedTaskIndex, setSelectedTaskIndex] = useState();
-    const [selectedListIndex, setSelectedListIndex] = useState();
+function BoardList() {
+    const dispatch = useDispatch();
+    const currentBoard = useSelector(
+        (state) => state.boardReducer.currentBoard
+    );
+    const selectedTask = useSelector(
+        (state) => state.boardReducer.selectedTask
+    );
+
     const [threeDotExpand, setThreeDotExpand] = useState(false);
 
+    const handleTaskClick = (task, listIndex, taskIndex) => {
+        dispatch(setSelectedTask(task));
+        dispatch(setSelectedTaskIndex(taskIndex));
+        dispatch(setSelectedListIndex(listIndex));
+    };
+
     return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "row",
-                flexWrap: "wrap",
-            }}>
+        <div className="board-list-container">
             {currentBoard.lists &&
                 currentBoard.lists.map((list, listIndex) => (
-                    <ul
-                        class="list-group"
-                        style={{
-                            width: "300px",
-                            border: "1px solid black",
-                            borderRadius: "5px",
-                            marginTop: "30px",
-                            marginLeft: "10px",
-                        }}>
-                        <h3
-                            class="list-group-item"
-                            style={{
-                                textAlign: "center",
-                            }}>
-                            {list.listTitle}
-                        </h3>
-
-                        {list.taskList &&
-                            list.taskList.map((task, taskIndex) => {
-                                return (
+                    <div key={listIndex} className="list-wrapper">
+                        <h3 className="list-title">{list.listTitle}</h3>
+                        <ul className="board-list">
+                            {list.taskList &&
+                                list.taskList.map((task, taskIndex) => (
                                     <li
-                                        style={{
-                                            display: "flex",
-                                            flexDirection: "row",
-                                        }}
-                                        class="list-group-item">
-                                        <span
-                                            onClick={() => {
-                                                setSelectedTask(task);
-                                                setSelectedTaskIndex(taskIndex);
-                                                setSelectedListIndex(listIndex);
-                                            }}>
-                                            {task.taskTitle}
-                                        </span>
-                                        <div
-                                            class="dropend"
-                                            data-bs-toggle="dropdown"
-                                            style={{
-                                                marginLeft: "200px",
-                                            }}>
-                                            <i class="bi bi-three-dots-vertical"></i>
-
-                                            <ul class="dropdown-menu">
+                                        key={taskIndex}
+                                        className="task-item"
+                                        onClick={() =>
+                                            handleTaskClick(
+                                                task,
+                                                listIndex,
+                                                taskIndex
+                                            )
+                                        }>
+                                        {task.taskTitle}
+                                        <div className="dropdown-wrapper">
+                                            <i className="bi bi-three-dots-vertical"></i>
+                                            <ul className="dropdown-menu">
                                                 <li
-                                                    class="dropdown-item"
-                                                    onClick={() => {
-                                                        setSelectedTask(task);
-                                                        setSelectedTaskIndex(
+                                                    className="dropdown-item"
+                                                    onClick={() =>
+                                                        handleTaskClick(
+                                                            task,
+                                                            listIndex,
                                                             taskIndex
-                                                        );
-                                                        setSelectedListIndex(
-                                                            listIndex
-                                                        );
-                                                        console.log(boards);
-                                                    }}>
+                                                        )
+                                                    }>
                                                     Edit
                                                 </li>
-                                                <li class="dropdown-item">
+                                                <li className="dropdown-item">
                                                     Delete
                                                 </li>
                                             </ul>
                                         </div>
                                     </li>
-                                );
-                            })}
-
-                        <TaskForm
-                            boards={boards}
-                            currentBoard={currentBoard}
-                            setCurrentBoard={setCurrentBoard}
-                            listIndex={listIndex}
-                            setBoard={setBoard}
-                        />
-                    </ul>
+                                ))}
+                            <li>
+                                <TaskForm listIndex={listIndex} />
+                            </li>
+                        </ul>
+                    </div>
                 ))}
-
-            {selectedTask && (
-                <TaskEdit
-                    selectedTask={selectedTask}
-                    selectedTaskIndex={selectedTaskIndex}
-                    setSelectedTask={setSelectedTask}
-                    setSelectedTaskIndex={setSelectedTaskIndex}
-                    boards={boards}
-                    setBoard={setBoard}
-                    currentBoard={currentBoard}
-                    selectedListIndex={selectedListIndex}
-                    setSelectedListIndex={setSelectedListIndex}
-                    setCurrentBoard={setCurrentBoard}
-                    users={users}
-                />
-            )}
+            {selectedTask && <TaskEdit />}
         </div>
     );
 }

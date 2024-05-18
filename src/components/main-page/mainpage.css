@@ -1,0 +1,28 @@
+.mainpage-container {
+    border: 1px solid black;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.mainpage-title {
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px;
+    width: 50%;
+    margin: 15px auto;
+}
+
+@media (max-width: 768px) {
+    .mainpage-title {
+        width: 80%;
+    }
+}
+
+@media (max-width: 576px) {
+    .mainpage-title {
+        width: 100%;
+    }
+}

@@ -1,0 +1,19 @@
+/* new-list-form.css */
+.new-list-container {
+    margin-top: 30px;
+    margin-left: 10px;
+}
+
+.form-container {
+    width: 30%;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .form-container {
+        width: 100%;
+    }
+}

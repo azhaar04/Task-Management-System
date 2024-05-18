@@ -1,142 +1,119 @@
 import { Formik, Form, Field } from "formik";
+import { produce } from "immer";
+import { useSelector, useDispatch } from "react-redux";
+import { setSelectedTask } from "../../../../../redux/board/board.actions";
+import "./add-member-popup.css";
 
-function AddmMemberPopup({
-    showAddMembersForm,
-    setShowAddMembersForm,
-    users,
-    selectedTask,
-    setSelectedTask,
-}) {
+function AddMemberPopup({ showAddMembersForm, setShowAddMembersForm }) {
+    const dispatch = useDispatch();
+    const selectedTask = useSelector(
+        (state) => state.boardReducer.selectedTask
+    );
+    const users = useSelector((state) => state.userReducer.users);
+
+    const handleMemberSelection = (selectedUser, setFieldValue) => {
+        setFieldValue("member", selectedUser.name);
+        const inputField = document.getElementById("member");
+        inputField.focus();
+
+        if (selectedTask) {
+            const updatedSelectedTask = produce(selectedTask, (draft) => {
+                draft.members = draft.members
+                    ? [...draft.members, selectedUser]
+                    : [selectedUser];
+            });
+            dispatch(setSelectedTask(updatedSelectedTask));
+        }
+    };
+
     return (
-        <div className="task-edit-popup">
-            <div class=" task-edit-popup-content">
-                <button
-                    className="close-button"
-                    onClick={() => setShowAddMembersForm(!showAddMembersForm)}>
-                    X
-                </button>
-                <Formik
-                    initialValues={{ member: "" }}
-                    onSubmit={(values, { resetForm }) => {
-                        resetForm();
-                    }}>
-                    {(formikProps) => {
-                        const { values, handleChange, setFieldValue } =
-                            formikProps;
+        showAddMembersForm && (
+            <div className="task-add-member-popup">
+                <div className="task-add-member-popup-content">
+                    <button
+                        className="close-window"
+                        onClick={() =>
+                            setShowAddMembersForm(!showAddMembersForm)
+                        }>
+                        X
+                    </button>
+                    <Formik
+                        initialValues={{ member: "" }}
+                        onSubmit={(values, { resetForm }) => {
+                            resetForm();
+                        }}>
+                        {(formikProps) => {
+                            const { values, handleChange, setFieldValue } =
+                                formikProps;
 
-                        return (
-                            <div>
-                                <Form>
-                                    <div className="form-group mb-3 ">
-                                        <label
-                                            htmlFor="renameTask"
-                                            className="form-label">
-                                            Add Members
-                                        </label>
-                                        <Field
-                                            type="input"
-                                            className="form-control"
-                                            id="member"
-                                            name="member"
-                                            value={values.member}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                </Form>
+                            // Filter users based on input value
+                            const filteredUsers = users.filter(
+                                (user) =>
+                                    user.name
+                                        .toLowerCase()
+                                        .includes(
+                                            values.member.toLowerCase()
+                                        ) &&
+                                    !selectedTask.members?.some(
+                                        (member) => member.name === user.name
+                                    )
+                            );
 
-                                <div
-                                    style={{
-                                        border: "1px solid black",
-                                        borderRadius: "5px",
-                                        width: "100%",
-                                    }}>
-                                    <ul class="list-group">
-                                        {users
-                                            .filter((user, userIndex) =>
-                                                user.name
-                                                    .toLowerCase()
-                                                    .includes(
-                                                        values.member.toLowerCase()
-                                                    )
-                                            )
-                                            .map(
-                                                (
-                                                    selectedUser,
-                                                    selectedUserIndex
-                                                ) => {
-                                                    const isAlreadySelected =
-                                                        selectedTask.members &&
-                                                        selectedTask.members.some(
-                                                            (member) =>
-                                                                member.name ===
-                                                                selectedUser.name
-                                                        );
-                                                    if (!isAlreadySelected) {
-                                                        return (
-                                                            <li
-                                                                class="list-group-item"
-                                                                style={{
-                                                                    cursor: "pointer",
-                                                                }}
-                                                                onClick={() => {
-                                                                    console.log(
-                                                                        selectedUser
-                                                                    );
-                                                                    setFieldValue(
-                                                                        "member",
-                                                                        selectedUser.name
-                                                                    );
-                                                                    const inputField =
-                                                                        document.getElementById(
-                                                                            "member"
-                                                                        );
-                                                                    inputField.focus();
+                            return (
+                                <div>
+                                    <Form>
+                                        <div className="form-group mb-3">
+                                            <label
+                                                htmlFor="renameTask"
+                                                className="form-label">
+                                                Add Members
+                                            </label>
+                                            <Field
+                                                type="input"
+                                                className="form-control"
+                                                id="member"
+                                                name="member"
+                                                value={values.member}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+                                    </Form>
 
-                                                                    setSelectedTask(
-                                                                        (
-                                                                            prevState
-                                                                        ) => {
-                                                                            let updatedMembers;
-                                                                            if (
-                                                                                selectedTask.members
-                                                                            ) {
-                                                                                updatedMembers =
-                                                                                    [
-                                                                                        ...prevState.members,
-                                                                                        selectedUser,
-                                                                                    ];
-                                                                            } else {
-                                                                                updatedMembers =
-                                                                                    [
-                                                                                        selectedUser,
-                                                                                    ];
-                                                                            }
-
-                                                                            return {
-                                                                                ...prevState,
-                                                                                members:
-                                                                                    updatedMembers,
-                                                                            };
-                                                                        }
-                                                                    );
-                                                                }}>
-                                                                {
-                                                                    selectedUser.name
-                                                                }
-                                                            </li>
-                                                        );
-                                                    }
-                                                }
+                                    <div
+                                        style={{
+                                            border: "1px solid black",
+                                            borderRadius: "5px",
+                                            width: "100%",
+                                        }}>
+                                        <ul className="list-group">
+                                            {filteredUsers.map(
+                                                (selectedUser, index) => (
+                                                    <li
+                                                        key={index}
+                                                        className="list-group-item"
+                                                        style={{
+                                                            cursor: "pointer",
+                                                        }}
+                                                        onClick={() =>
+                                                            handleMemberSelection(
+                                                                selectedUser,
+                                                                setFieldValue
+                                                            )
+                                                        }>
+                                                        {selectedUser.name}
+                                                    </li>
+                                                )
                                             )}
-                                    </ul>
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                        );
-                    }}
-                </Formik>
+                            );
+                        }}
+                    </Formik>
+                </div>
             </div>
-        </div>
+        )
     );
 }
 
-export default AddmMemberPopup;
+export default AddMemberPopup;

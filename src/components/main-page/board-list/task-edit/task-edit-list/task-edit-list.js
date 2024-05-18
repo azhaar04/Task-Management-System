@@ -1,3 +1,5 @@
+import "./task-edit-list.css";
+
 function TaskEditList({
     showTaskNameRename,
     setShowTaskNameRename,
@@ -10,93 +12,34 @@ function TaskEditList({
 }) {
     return (
         <div className="col-md-4">
-            <ul
-                className="list-group"
-                style={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    // justifyContent: "center",
-                    alignItems: "center",
-                }}>
+            <label className="label">Add to card</label>
+            <ul className="list-group">
                 <li
                     className="list-group-item"
-                    style={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "row",
-                        // alignItems: "center",
-                        gap: "5px",
-                        justifyContent: "center", // Center content horizontally
-                        alignItems: "center", // Center content vertically
-                    }}>
-                    <i class="bi bi-caret-right"></i>
-                    <span
-                        onClick={() =>
-                            setShowTaskNameRename(!showTaskNameRename)
-                        }>
-                        Rename
-                    </span>
+                    onClick={() => setShowTaskNameRename(!showTaskNameRename)}>
+                    <i className="bi bi-caret-right"></i>
+                    <span>Rename</span>
                 </li>
 
                 <li
                     className="list-group-item"
-                    style={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "row",
-                        // alignItems: "center",
-                        gap: "5px",
-                        justifyContent: "center", // Center content horizontally
-                        alignItems: "center", // Center content vertically
-                    }}>
-                    <i class="bi bi-person"></i>
-                    <span
-                        onClick={() =>
-                            setShowAddMembersForm(!showAddMembersForm)
-                        }>
-                        Members
-                    </span>
+                    onClick={() => setShowAddMembersForm(!showAddMembersForm)}>
+                    <i className="bi bi-person"></i>
+                    <span>Members</span>
                 </li>
 
                 <li
                     className="list-group-item"
-                    style={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "row",
-                        // alignItems: "center",
-                        gap: "5px",
-                        justifyContent: "center", // Center content horizontally
-                        alignItems: "center", // Center content vertically
-                    }}>
-                    <i class="bi bi-clock"></i>
-                    <span
-                        onClick={() => {
-                            setShowDates(!showDates);
-                        }}>
-                        Dates
-                    </span>
+                    onClick={() => setShowDates(!showDates)}>
+                    <i className="bi bi-clock"></i>
+                    <span>Dates</span>
                 </li>
 
                 <li
                     className="list-group-item"
-                    style={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "row",
-                        // alignItems: "center",
-                        gap: "5px",
-                        justifyContent: "center", // Center content horizontally
-                        alignItems: "center", // Center content vertically
-                    }}>
-                    <i class="bi bi-check2-square"></i>
-                    <span
-                        onClick={() => {
-                            setShowCheckListForm(!showCheckListForm);
-                        }}>
-                        Checklist
-                    </span>
+                    onClick={() => setShowCheckListForm(!showCheckListForm)}>
+                    <i className="bi bi-check2-square"></i>
+                    <span>Checklist</span>
                 </li>
             </ul>
         </div>

@@ -1,7 +1,10 @@
 import TableHeader from "./table-header/table.header";
 import TableBody from "./table-body/table.body";
+import { useSelector } from "react-redux";
 
-function MembersTable({ users }) {
+function MembersTable() {
+    const users = useSelector((state) => state.userReducer.users);
+
     const columns = [
         {
             label: "ID",
@@ -32,7 +35,7 @@ function MembersTable({ users }) {
             <h3>Members</h3>
             <table class="table" style={{ marginTop: "10px" }}>
                 <TableHeader columns={columns} />
-                <TableBody items={users} columns={columns} />
+                <TableBody columns={columns} />
             </table>
         </div>
     );

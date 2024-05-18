@@ -1,8 +1,14 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useState, useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { setUsers } from "../../redux/user/user.actions";
 
-function AddMemberForm({ users, setUsers, setShowNewMemberForm }) {
+function AddMemberForm({ setShowNewMemberForm }) {
+    const dispatch = useDispatch();
+
+    const users = useSelector((state) => state.userReducer.users);
+
     useEffect(() => {
         console.log(users);
     }, [users]);
@@ -23,8 +29,9 @@ function AddMemberForm({ users, setUsers, setShowNewMemberForm }) {
                 }}
                 onSubmit={(values, { resetForm }) => {
                     console.log(values);
+                    dispatch(setUsers(values));
+                    // setUsers((prevState) => [...prevState, values]);
 
-                    setUsers((prevState) => [...prevState, values]);
                     // setUsers([...users, values]);
                     resetForm();
                 }}>

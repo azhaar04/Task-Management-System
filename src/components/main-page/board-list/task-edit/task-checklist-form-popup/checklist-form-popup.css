@@ -1,4 +1,6 @@
-.task-rename-popup {
+/* checklist-form-popup.css */
+
+.check-list-form-popup {
     position: fixed;
     top: 0;
     left: 0;
@@ -10,33 +12,17 @@
     align-items: center;
 }
 
-.task-rename-popup-content {
-    width: 80%;
+.check-list-form-popup-content {
+    width: 90%;
     max-width: 400px;
     background-color: #ffffff;
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     position: relative;
-    display: flex;
-    flex-direction: column;
 }
 
-.task-rename-popup input[type="text"] {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-/* .task-rename-popup label {
-    font-weight: normal;
-    font-size: large;
-    margin-top: 10px;
-} */
-
-.task-rename-popup .task-rename-close-button {
+.check-list-form-close-button {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -49,7 +35,15 @@
     color: #ccc;
 }
 
-.task-rename-popup .task-rename-close-button:hover {
+.check-list-form-close-button:hover {
     background: #ccc;
     color: #000;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+    .check-list-form-popup-content {
+        width: 95%;
+        max-width: 350px;
+    }
 }

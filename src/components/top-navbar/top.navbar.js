@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import { setIsLoggedIn } from "../../redux/user/user.actions";
+import { useDispatch } from "react-redux";
 
 function TopNavbar() {
     const navigate = useNavigate();
-
+    const dispatch = useDispatch();
     return (
         <nav
             class="navbar navbar-expand-lg navbar-light bg-light"
@@ -46,12 +48,12 @@ function TopNavbar() {
                             class="dropdown-menu"
                             aria-labelledby="navbarDropdown">
                             <li>
-                                <span class="dropdown-item" href="#">
+                                <span class="dropdown-item">
                                     Switch Account
                                 </span>
                             </li>
                             <li>
-                                <span class="dropdown-item" href="#">
+                                <span class="dropdown-item">
                                     Manage Account
                                 </span>
                             </li>
@@ -64,6 +66,8 @@ function TopNavbar() {
                                     class="dropdown-item"
                                     onClick={() => {
                                         localStorage.removeItem("token");
+                                        localStorage.removeItem("userLoggedIn");
+                                        dispatch(setIsLoggedIn(false));
                                         navigate("/login", { replace: true });
                                     }}>
                                     Log out

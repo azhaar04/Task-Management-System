@@ -1,0 +1,39 @@
+/* task-form.css */
+.task-form-container {
+    padding: 10px;
+}
+
+.task-submit-button {
+    width: 30%;
+}
+
+.task-list-suggestion {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.task-list-item {
+    cursor: pointer;
+    padding: 10px;
+
+    border-radius: 5px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.task-list-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .input-field,
+    .submit-button {
+        width: 100%;
+    }
+
+    .task-submit-button {
+        margin-top: 10px;
+    }
+}

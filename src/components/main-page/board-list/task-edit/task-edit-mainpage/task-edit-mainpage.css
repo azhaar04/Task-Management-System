@@ -1,0 +1,121 @@
+.task-edit-mainpage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.label-info {
+    display: flex;
+    gap: 10px;
+}
+
+.due-date label,
+.members label,
+.description label {
+    /* font-weight: bold; */
+    margin-bottom: 5px;
+}
+.due-date h6 {
+    margin-left: 25px;
+}
+
+.members-list {
+    display: flex;
+    flex-direction: row;
+    margin-left: 25px;
+}
+
+.member-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+.description {
+    margin-top: 10px;
+}
+
+.description-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.edit-icon {
+    cursor: pointer;
+}
+
+.description-content {
+    max-width: 100%;
+    margin-left: 25px;
+}
+
+.description-content p {
+    max-width: 400px;
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+
+.description-input {
+    max-width: 100%;
+    margin-left: 25px;
+}
+
+.description-input input {
+    width: 100%;
+    padding: 5px;
+}
+
+.checklists {
+    margin-top: 10px;
+}
+
+.checklist {
+    margin-bottom: 10px;
+}
+
+.checklist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Added gap between percentage text and range input */
+    margin-left: 25px;
+}
+
+.progress-bar input[type="range"] {
+    width: 100%;
+}
+
+.checklist-items {
+    margin-top: 5px;
+}
+
+.checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checklist-item input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.btn-add-an-item {
+    margin-left: 25px;
+}
+
+.input-add-an-item {
+    margin-left: 25px;
+    max-width: 95%;
+}

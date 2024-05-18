@@ -1,0 +1,82 @@
+.side-navbar {
+    border: 1px solid black;
+    min-height: 80vh;
+
+    background-color: #f2f2f2;
+}
+
+.list-group-item-margin {
+    margin-bottom: 10px;
+}
+
+.create-board-form {
+    width: 100%;
+    padding: 0px;
+    margin-top: 10px;
+}
+
+.members-list {
+    margin-top: 10px;
+}
+
+.form-group-margin {
+    margin-bottom: 3rem;
+    width: 100%;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .side-navbar {
+        min-height: auto;
+        border: none;
+    }
+
+    .list-group {
+        padding-left: 0;
+    }
+
+    .list-group-item-margin {
+        margin-bottom: 5px;
+    }
+
+    .create-board-form {
+        width: 100%; /* Adjusted for responsiveness */
+    }
+
+    .members-list {
+        margin-top: 5px;
+    }
+
+    .form-group-margin {
+        margin-bottom: 1.5rem;
+    }
+}
+/* SideNavbar.css */
+/* Existing styles for other elements */
+
+/* Your Boards List */
+.boards-list {
+    padding-left: 0;
+}
+
+.board-item {
+    cursor: pointer;
+    padding: 10px 15px;
+    transition: background-color 0.3s ease;
+}
+
+.board-item.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.board-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .board-item {
+        padding: 8px 12px;
+    }
+}

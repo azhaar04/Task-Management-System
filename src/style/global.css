@@ -1,0 +1,60 @@
+/* Form styles */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.form-label {
+    font-weight: normal;
+    font-size: large;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* save button */
+.btn-save {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 5px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.btn-save:hover {
+    background-color: #0056b3;
+}
+
+/* close window */
+
+.close-window {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: 1px;
+    border-radius: 50%;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #ccc;
+}
+.close-window:hover {
+    background: #ccc;
+    color: #000;
+}
+
+/* Task form*/
+.task-form-group {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}

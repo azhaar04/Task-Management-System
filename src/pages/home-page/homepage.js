@@ -5,47 +5,66 @@ import AddMemberForm from "../../components/add-member-form/add-member-form";
 import MembersTable from "../../components/memers-table/members-table";
 
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import { setUsers, setIsLoggedIn } from "../../redux/user/user.actions";
+import { setBoard, setCurrentBoard } from "../../redux/board/board.actions";
+import "./homepage.css";
 
 function Homepage() {
-    const [boards, setBoard] = useState();
+    const dispatch = useDispatch();
 
-    let [currentBoard, setCurrentBoard] = useState();
     const [showNewMemberForm, setShowNewMemberForm] = useState(false);
     const [showMembersTable, setShowMembersTable] = useState(false);
-    const [users, setUsers] = useState();
+
+    const boards = useSelector((state) => state.boardReducer.boards);
+    const isLoggedIn = useSelector((state) => state.userReducer.isLoggedIn);
+    const users = useSelector((state) => state.userReducer.users);
+    const currentBoard = useSelector(
+        (state) => state.boardReducer.currentBoard
+    );
 
     useEffect(() => {
-        if (boards) {
+        if (boards.length > 0) {
             localStorage.setItem("myBoard", JSON.stringify(boards));
             localStorage.setItem("currentBoard", JSON.stringify(currentBoard));
         }
     }, [boards]);
 
     useEffect(() => {
-        if (users) {
+        if (users.length > 0) {
             localStorage.setItem("user", JSON.stringify(users));
         }
     }, [users]);
 
     useEffect(() => {
-        // Retrieve boards from local storage
+        localStorage.setItem("userLoggedIn", JSON.stringify(isLoggedIn));
+    });
+
+    useEffect(() => {
         const storedBoards = localStorage.getItem("myBoard");
         const storedCurrentBoard = localStorage.getItem("currentBoard");
 
-        if (storedBoards !== null) {
+        if (storedBoards !== null && storedCurrentBoard !== null) {
             try {
-                setBoard(JSON.parse(storedBoards));
-                setCurrentBoard(JSON.parse(storedCurrentBoard));
+                dispatch(setBoard(JSON.parse(storedBoards)));
+                dispatch(setCurrentBoard(JSON.parse(storedCurrentBoard)));
             } catch (error) {
                 console.error("Error parsing JSON:", error);
             }
+        } else {
+            console.error("Stored boards or current board data is null");
         }
     }, []);
 
     useEffect(() => {
         const storedUsers = localStorage.getItem("user");
         if (storedUsers !== null) {
-            setUsers(JSON.parse(storedUsers));
+            try {
+                dispatch(setUsers(JSON.parse(storedUsers)));
+            } catch (error) {
+                console.error("Error parsing JSON:", error);
+            }
         }
     }, []);
 
@@ -64,30 +83,18 @@ function Homepage() {
                         marginTop: "10px",
                     }}>
                     <SideNavbar
-                        setBoard={setBoard}
-                        boards={boards}
-                        currentBoard={currentBoard}
                         setShowNewMemberForm={setShowNewMemberForm}
                         setShowMembersTable={setShowMembersTable}
-                        setCurrentBoard={setCurrentBoard}
                     />
 
                     {showNewMemberForm ? (
                         <AddMemberForm
                             setShowNewMemberForm={setShowNewMemberForm}
-                            users={users}
-                            setUsers={setUsers}
                         />
                     ) : showMembersTable ? (
-                        <MembersTable users={users} />
+                        <MembersTable />
                     ) : (
-                        <MainPage
-                            setBoard={setBoard}
-                            boards={boards}
-                            currentBoard={currentBoard}
-                            setCurrentBoard={setCurrentBoard}
-                            users={users}
-                        />
+                        <MainPage />
                     )}
                 </div>
             </div>

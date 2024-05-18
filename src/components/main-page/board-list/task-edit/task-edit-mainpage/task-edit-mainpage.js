@@ -1,146 +1,121 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setSelectedTask } from "../../../../../redux/board/board.actions";
+import { produce } from "immer";
+import "./task-edit-mainpage.css";
 
-function TaskEditMainPage({
-    selectedTask,
-    setSelectedTask,
-
-    showCheckListItem,
-    setShowCheckListItem,
-}) {
+function TaskEditMainPage({ showCheckListItem, setShowCheckListItem }) {
+    const dispatch = useDispatch();
+    const selectedTask = useSelector(
+        (state) => state.boardReducer.selectedTask
+    );
     const [showDescription, setShowDescription] = useState(false);
+
+    useEffect(() => {
+        if (selectedTask.description) setShowDescription(!showDescription);
+    }, []);
+
+    const handleEditDescription = () => {
+        setShowDescription(!showDescription);
+        setTimeout(() => {
+            const descriptionField = document.getElementById("description");
+            if (descriptionField) {
+                descriptionField.focus();
+                descriptionField.setSelectionRange(
+                    descriptionField.value.length,
+                    descriptionField.value.length
+                );
+            }
+        }, 10);
+    };
+
+    const handleDescriptionChange = (e) => {
+        const newDescription = e.target.value;
+        const newSelectedTask = produce(selectedTask, (draft) => {
+            draft.description = newDescription;
+        });
+        dispatch(setSelectedTask(newSelectedTask));
+    };
+
     return (
-        <div
-            className="col-md-8"
-            style={{
-                position: "relative",
-                display: "flex",
-                flexDirection: "column",
-            }}>
+        <div className="task-edit-mainpage col-md-8">
             <div>
                 {selectedTask.dueDate && (
-                    <div>
-                        <label>Due Date</label>
-                        <h6>{`${selectedTask.dueDate.getDate()}/${
-                            selectedTask.dueDate.getMonth() + 1
-                        }/${selectedTask.dueDate.getFullYear()}`}</h6>
+                    <div className="due-date">
+                        <div className="label-info">
+                            <i class="bi bi-calendar-check"></i>
+                            <label>Due Date</label>
+                        </div>
+                        <h6>
+                            {new Date(selectedTask.dueDate).getDate()}/
+                            {new Date(selectedTask.dueDate).getMonth() + 1}/
+                            {new Date(selectedTask.dueDate).getFullYear()}
+                        </h6>
                     </div>
                 )}
             </div>
 
             <div>
                 {selectedTask.members && (
-                    <div>
-                        <label>Members</label>
-                        <div
-                            style={{
-                                display: "flex",
-                                flexDirection: "row",
-                            }}>
-                            {selectedTask.members &&
-                                selectedTask.members.map((member) => {
-                                    console.log(member);
-                                    const words = member.name.split(" ");
-                                    const initials = words
-                                        .map((word) =>
-                                            word.charAt(0).toUpperCase()
-                                        )
-                                        .join("");
-                                    const iconStyle = {
-                                        width: "30px",
-                                        height: "30px",
-                                        borderRadius: "50%",
-                                        backgroundColor: "#007bff", // Example background color
-                                        color: "#ffffff", // Example text color
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        marginRight: "5px", // Adjust as needed
-                                        fontSize: "16px", // Adjust font size as needed
-                                    };
+                    <div className="members">
+                        <div className="label-info">
+                            <i class="bi bi-person"></i>
+                            <label>Members</label>
+                        </div>
 
-                                    return (
-                                        <div style={iconStyle}>{initials}</div>
-                                    );
-                                })}
+                        <div className="members-list">
+                            {selectedTask.members.map((member) => {
+                                const words = member.name.split(" ");
+                                const initials = words
+                                    .map((word) => word.charAt(0).toUpperCase())
+                                    .join("");
+                                return (
+                                    <div className="member-icon">
+                                        {initials}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 )}
             </div>
 
-            <div>
-                <div
-                    style={{
-                        display: "flex",
-                        flexDirection: "row",
-                    }}>
-                    <label>Description</label>
-                    <div
-                        style={{
-                            position: "absolute",
-                            right: 0,
-                            marginRight: "12px",
-                        }}>
-                        {showDescription && (
+            <div className="description">
+                <div className="description-header">
+                    <div className="label-info">
+                        <i class="bi bi-justify-left"></i>
+                        <label>Description</label>
+                    </div>
+
+                    <div className="edit-icon">
+                        {selectedTask.description && showDescription && (
                             <i
-                                class="bi bi-pencil-square"
-                                onClick={() => {
-                                    setShowDescription(!showDescription);
-                                    setTimeout(() => {
-                                        const descriptionField =
-                                            document.getElementById(
-                                                "description"
-                                            );
-                                        if (descriptionField) {
-                                            descriptionField.focus();
-                                            descriptionField.setSelectionRange(
-                                                descriptionField.value.length,
-                                                descriptionField.value.length
-                                            );
-                                        }
-                                    }, 10);
-                                }}></i>
+                                className="bi bi-pencil-square"
+                                onClick={handleEditDescription}></i>
                         )}
                     </div>
                 </div>
-                {selectedTask.desciption && showDescription ? (
-                    <div
-                        style={{
-                            padding: "5px",
-                            maxWidth: "100%",
-                            wordWrap: "break-word", // Allow word wrapping
-                        }}>
-                        <p
-                            style={{
-                                margin: 0,
-                                maxWidth: "350px",
-                                overflowWrap: "break-word",
-                                wordBreak: "break-all",
-                            }}>
-                            {selectedTask.desciption}
-                        </p>
+                {selectedTask.description && showDescription ? (
+                    <div className="description-content">
+                        <p>{selectedTask.description}</p>
                     </div>
                 ) : (
-                    <div style={{ maxWidth: "100%" }}>
+                    <div className="description-input">
                         <input
                             type="text"
                             id="description"
-                            value={selectedTask.desciption}
-                            onSubmit={(e) => {}}
+                            value={selectedTask.description}
+                            onChange={handleDescriptionChange}
                             onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    setSelectedTask((prevState) => ({
-                                        ...prevState,
-                                        desciption: e.target.value,
-                                    }));
+                                if (e.key === "Enter")
                                     setShowDescription(!showDescription);
-                                }
                             }}
                         />
                     </div>
                 )}
             </div>
 
-            <div>
+            <div className="checklists">
                 {selectedTask.checkLists &&
                     selectedTask.checkLists.map((checkList, checkListIndex) => {
                         const checkedItemCount = checkList.checkListItem
@@ -149,95 +124,95 @@ function TaskEditMainPage({
                               ).length
                             : 0;
 
-                        // Calculate the value for the range input based on the number of checked items
                         const rangeValue = checkList.checkListItem
-                            ? checkedItemCount *
-                              (100 / checkList.checkListItem.length)
+                            ? Math.floor(
+                                  checkedItemCount *
+                                      (100 / checkList.checkListItem.length)
+                              )
                             : 0;
                         return (
-                            <div>
-                                <label>{checkList.checkListTitle}</label>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="100"
-                                    value={rangeValue}
-                                    onChange={
-                                        (e) => {}
-                                        // setRangeValue(
-                                        //     parseInt(e.target.value)
-                                        // )
-                                    }
-                                    style={{ width: "100%" }}
-                                />
+                            <div className="checklist">
+                                <div className="checklist-header">
+                                    <div className="label-info">
+                                        <i class="bi bi-check2-square"></i>
+                                        <label>
+                                            {checkList.checkListTitle}
+                                        </label>
+                                    </div>
 
-                                <div>
+                                    <i className="bi bi-x-square"></i>
+                                </div>
+
+                                <div className="progress-bar">
+                                    <span>{rangeValue}%</span>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="100"
+                                        value={rangeValue}
+                                    />
+                                </div>
+
+                                <div className="checklist-items">
                                     {checkList.checkListItem &&
                                         checkList.checkListItem.map(
                                             (item, itemIndex) => {
                                                 return (
-                                                    <div>
+                                                    <div className="checklist-item">
                                                         <input
                                                             type="checkbox"
-                                                            id="myCheckbox"
-                                                            name="myCheckbox"
                                                             checked={
                                                                 item.checked
                                                             }
                                                             onChange={() => {
-                                                                setSelectedTask(
-                                                                    (
-                                                                        prevState
-                                                                    ) => {
-                                                                        const updatedSelectedTask =
-                                                                            {
-                                                                                ...prevState,
-                                                                            };
-                                                                        const updatedCheckLists =
-                                                                            [
-                                                                                ...updatedSelectedTask.checkLists,
-                                                                            ];
-                                                                        const updatedCheckList =
-                                                                            {
-                                                                                ...updatedCheckLists[
-                                                                                    checkListIndex
-                                                                                ],
-                                                                            };
-
-                                                                        // Clone the checkListItem array and update the checked value of the specific item
-                                                                        updatedCheckList.checkListItem =
-                                                                            updatedCheckList.checkListItem.map(
-                                                                                (
-                                                                                    item,
-                                                                                    index
-                                                                                ) => {
-                                                                                    if (
-                                                                                        index ===
-                                                                                        itemIndex
-                                                                                    ) {
-                                                                                        return {
-                                                                                            ...item,
-                                                                                            checked:
-                                                                                                !item.checked,
-                                                                                        }; // Toggle the checked value
+                                                                const updatedSelectedTask =
+                                                                    produce(
+                                                                        selectedTask,
+                                                                        (
+                                                                            draft
+                                                                        ) => {
+                                                                            const updatedCheckList =
+                                                                                {
+                                                                                    ...draft
+                                                                                        .checkLists[
+                                                                                        checkListIndex
+                                                                                    ],
+                                                                                };
+                                                                            updatedCheckList.checkListItem =
+                                                                                updatedCheckList.checkListItem.map(
+                                                                                    (
+                                                                                        item,
+                                                                                        index
+                                                                                    ) => {
+                                                                                        if (
+                                                                                            index ===
+                                                                                            itemIndex
+                                                                                        ) {
+                                                                                            return {
+                                                                                                ...item,
+                                                                                                checked:
+                                                                                                    !item.checked,
+                                                                                            };
+                                                                                        }
+                                                                                        return item;
                                                                                     }
-                                                                                    return item;
-                                                                                }
-                                                                            );
+                                                                                );
 
-                                                                        updatedCheckLists[
-                                                                            checkListIndex
-                                                                        ] =
-                                                                            updatedCheckList;
-                                                                        updatedSelectedTask.checkLists =
-                                                                            updatedCheckLists;
+                                                                            draft.checkLists[
+                                                                                checkListIndex
+                                                                            ] =
+                                                                                updatedCheckList;
+                                                                        }
+                                                                    );
 
-                                                                        return updatedSelectedTask;
-                                                                    }
+                                                                dispatch(
+                                                                    setSelectedTask(
+                                                                        updatedSelectedTask
+                                                                    )
                                                                 );
                                                             }}
                                                         />
-                                                        <label for="myCheckbox">
+                                                        <label>
                                                             {item.checkItem}
                                                         </label>
                                                     </div>
@@ -246,35 +221,27 @@ function TaskEditMainPage({
                                         )}
                                 </div>
 
-                                <div>
-                                    {showCheckListItem && (
-                                        <input
-                                            type="text"
-                                            id="item"
-                                            name="item"
-                                            placeholder="Add an item"
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Enter") {
-                                                    setSelectedTask(
-                                                        (prevState) => {
-                                                            const updatedSelectedTask =
-                                                                {
-                                                                    ...selectedTask,
-                                                                };
-                                                            const updatedCheckLists =
-                                                                [
-                                                                    ...updatedSelectedTask.checkLists,
-                                                                ];
+                                {showCheckListItem && (
+                                    <input
+                                        type="text"
+                                        className="form-control input-add-an-item"
+                                        placeholder="Add an item"
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                const updatedSelectedTask =
+                                                    produce(
+                                                        selectedTask,
+                                                        (draft) => {
                                                             const updatedCheckList =
                                                                 {
-                                                                    ...updatedCheckLists[
+                                                                    ...draft
+                                                                        .checkLists[
                                                                         checkListIndex
                                                                     ],
                                                                 };
                                                             if (
                                                                 updatedCheckList.checkListItem
                                                             ) {
-                                                                // If checkListItem array already exists, append the new value
                                                                 updatedCheckList.checkListItem =
                                                                     [
                                                                         ...updatedCheckList.checkListItem,
@@ -287,7 +254,6 @@ function TaskEditMainPage({
                                                                         },
                                                                     ];
                                                             } else {
-                                                                // If checkListItem array doesn't exist, create a new array
                                                                 updatedCheckList.checkListItem =
                                                                     [
                                                                         {
@@ -299,26 +265,29 @@ function TaskEditMainPage({
                                                                         },
                                                                     ];
                                                             }
-
-                                                            updatedCheckLists[
+                                                            draft.checkLists[
                                                                 checkListIndex
                                                             ] =
                                                                 updatedCheckList;
-                                                            updatedSelectedTask.checkLists =
-                                                                updatedCheckLists;
-                                                            return updatedSelectedTask;
                                                         }
                                                     );
-                                                    setShowCheckListItem(
-                                                        !showCheckListItem
-                                                    );
-                                                }
-                                            }}
-                                        />
-                                    )}
-                                </div>
+
+                                                dispatch(
+                                                    setSelectedTask(
+                                                        updatedSelectedTask
+                                                    )
+                                                );
+
+                                                setShowCheckListItem(
+                                                    !showCheckListItem
+                                                );
+                                            }
+                                        }}
+                                    />
+                                )}
 
                                 <button
+                                    className="btn-save btn-add-an-item"
                                     onClick={() =>
                                         setShowCheckListItem(!showCheckListItem)
                                     }>

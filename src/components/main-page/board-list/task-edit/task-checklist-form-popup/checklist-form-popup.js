@@ -1,50 +1,58 @@
 import { Formik, Form, Field } from "formik";
+import { useSelector, useDispatch } from "react-redux";
+import { produce } from "immer";
+import { setSelectedTask } from "../../../../../redux/board/board.actions";
+import "./checklist-form-popup.css";
 
-function CheckListForm({
-    showCheckListForm,
-    setShowCheckListForm,
-    selectedTask,
-    setSelectedTask,
-}) {
+function CheckListForm({ showCheckListForm, setShowCheckListForm }) {
+    const dispatch = useDispatch();
+    const selectedTask = useSelector(
+        (state) => state.boardReducer.selectedTask
+    );
+
     return (
-        <div className="task-edit-popup">
-            <div className="task-edit-popup-content">
+        <div className="check-list-form-popup">
+            <div className="check-list-form-popup-content">
                 <button
-                    className="close-button"
+                    className="close-window"
                     onClick={() => setShowCheckListForm(!showCheckListForm)}>
                     X
                 </button>
                 <Formik
                     initialValues={{ checkListTitle: "CheckList" }}
                     onSubmit={(values, { resetForm }) => {
-                        setSelectedTask((prevState) => {
-                            let updatedCheckList;
-                            if (selectedTask.checkLists) {
-                                updatedCheckList = [
-                                    ...prevState.checkLists,
-                                    {
-                                        checkListTitle: values.checkListTitle,
-                                    },
-                                ];
-                            } else {
-                                updatedCheckList = [
-                                    {
-                                        checkListTitle: values.checkListTitle,
-                                    },
-                                ];
-                            }
-
-                            return {
-                                ...prevState,
-                                checkLists: updatedCheckList,
-                            };
-                        });
+                        if (selectedTask) {
+                            const updatedSelectedTask = produce(
+                                selectedTask,
+                                (draft) => {
+                                    let updatedCheckLists;
+                                    if (draft.checkLists) {
+                                        updatedCheckLists = [
+                                            ...draft.checkLists,
+                                            {
+                                                checkListTitle:
+                                                    values.checkListTitle,
+                                            },
+                                        ];
+                                    } else {
+                                        updatedCheckLists = [
+                                            {
+                                                checkListTitle:
+                                                    values.checkListTitle,
+                                            },
+                                        ];
+                                    }
+                                    draft.checkLists = updatedCheckLists;
+                                }
+                            );
+                            dispatch(setSelectedTask(updatedSelectedTask));
+                        }
                         setShowCheckListForm(!showCheckListForm);
                         resetForm();
                     }}>
                     {(formikProps) => {
                         return (
-                            <Form className="form-group mb-3 ">
+                            <Form className="form-group">
                                 <label
                                     htmlFor="checkListTitle"
                                     className="form-label">
@@ -56,7 +64,9 @@ function CheckListForm({
                                     id="checkListTitle"
                                     name="checkListTitle"
                                 />
-                                <button type="submit">Add</button>
+                                <button type="submit" className="btn-save">
+                                    Add
+                                </button>
                             </Form>
                         );
                     }}

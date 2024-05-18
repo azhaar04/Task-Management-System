@@ -1,67 +1,68 @@
 import { Formik, Form, Field } from "formik";
 
 import { useEffect } from "react";
+import {
+    setBoard,
+    setCurrentBoard,
+} from "../../../../redux/board/board.actions";
 
-function NewList({ boards, currentBoard, setCurrentBoard, setBoard }) {
+import { useDispatch, useSelector } from "react-redux";
+import "./new-list-form.css";
+
+function NewList() {
+    const dispatch = useDispatch();
+
+    const boards = useSelector((state) => state.boardReducer.boards);
+    const currentBoard = useSelector(
+        (state) => state.boardReducer.currentBoard
+    );
+
     useEffect(() => {
-        const updatedBoard = [...boards];
-        updatedBoard[currentBoard.id] = { ...currentBoard };
-        setBoard(updatedBoard);
+        if (currentBoard) {
+            const updatedBoard = boards.map((board) =>
+                board.id === currentBoard.id ? currentBoard : board
+            );
+            dispatch(setBoard(updatedBoard));
+        }
     }, [currentBoard]);
 
+    const addNewList = (listTitle) => {
+        if (currentBoard) {
+            const newList = {
+                listTitle: listTitle,
+                taskList: [],
+            };
+            const updatedCurrentBoard = {
+                ...currentBoard,
+                lists: [...currentBoard.lists, newList],
+            };
+            dispatch(setCurrentBoard(updatedCurrentBoard));
+        }
+    };
+
     return (
-        <div
-            style={{
-                marginTop: "30px",
-                marginLeft: "10px",
-            }}>
+        <div className="new-list-container">
             {currentBoard.lists.length < 3 && (
                 <Formik
                     initialValues={{
                         listTitle: "",
                     }}
                     onSubmit={(values, { resetForm }) => {
-                        const newObj = {
-                            listTitle: values.listTitle,
-                            taskList: [],
-                        };
-
-                        const updatedCurrentBoard = { ...currentBoard };
-                        updatedCurrentBoard.lists.push(newObj);
-                        setCurrentBoard(updatedCurrentBoard);
-
-                        console.log(boards);
-
+                        addNewList(values.listTitle);
                         resetForm();
                     }}>
                     {(formikprops) => {
                         return (
                             <Form>
-                                <div
-                                    className="form-group mb-3 "
-                                    style={{
-                                        width: "300px",
-                                        border: "1px solid black",
-                                        borderRadius: "5px",
-                                        padding: "10px",
-                                    }}>
+                                <div className="form-group form-container">
                                     <Field
                                         type="input"
                                         className="form-control"
                                         id="listTitle"
                                         name="listTitle"
                                         placeholder="Enter list title..."
-                                        style={{
-                                            width: "70%",
-                                        }}
                                     />
-                                    <button
-                                        type="submit"
-                                        style={{
-                                            width: "30%",
-                                            marginTop: "5px",
-                                        }}
-                                        className="btn btn-primary">
+                                    <button type="submit" className="btn-save">
                                         Add List
                                     </button>
                                 </div>

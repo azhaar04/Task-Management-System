@@ -1,12 +1,14 @@
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useState, useEffect } from "react";
-
 import { useSelector, useDispatch } from "react-redux";
 import { produce } from "immer";
+import { v4 as uuidv4 } from "uuid";
+
 import {
     setBoard,
     setCurrentBoard,
 } from "../../../../redux/board/board.actions";
+import { taskSchema } from "../../../../redux/board/board.schema";
 import "./task.form.css";
 
 function TaskForm({ listIndex }) {
@@ -34,7 +36,7 @@ function TaskForm({ listIndex }) {
                 draft.lists.map((list, idx) => {
                     if (idx !== listIndex) {
                         const filteredTaskIndex = list.taskList.findIndex(
-                            (task) => task.taskTitle === filteredTask.taskTitle
+                            (task) => task.taskId === filteredTask.taskId
                         );
                         if (filteredTaskIndex !== -1) {
                             draft.lists[idx].taskList.splice(
@@ -57,6 +59,7 @@ function TaskForm({ listIndex }) {
                 initialValues={{
                     taskName: "",
                 }}
+                validationSchema={taskSchema}
                 onSubmit={(values, { resetForm }) => {
                     if (
                         currentBoard &&
@@ -68,6 +71,7 @@ function TaskForm({ listIndex }) {
                             (draft) => {
                                 draft.lists[listIndex].taskList.push({
                                     taskTitle: values.taskName,
+                                    taskId: uuidv4(),
                                 });
                             }
                         );
@@ -100,6 +104,10 @@ function TaskForm({ listIndex }) {
                                         className="btn btn-primary task-submit-button">
                                         Add
                                     </button>
+                                </div>
+
+                                <div className="invalid-feedback d-block">
+                                    <ErrorMessage name="taskName" />
                                 </div>
                             </Form>
 
@@ -136,8 +144,8 @@ function TaskForm({ listIndex }) {
                                                                         (
                                                                             task
                                                                         ) =>
-                                                                            filteredTask.taskTitle ===
-                                                                            task.taskTitle
+                                                                            filteredTask.taskId ===
+                                                                            task.taskId
                                                                     );
 
                                                                 if (

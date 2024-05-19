@@ -2,9 +2,8 @@
 import React, { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useNavigate } from "react-router-dom";
-import { loginSchema } from "../../../utils/user.schema";
-import { login } from "../../../utils/user.actions";
-import { setIsLoggedIn } from "../../../redux/user/user.actions";
+import { loginSchema } from "../../../redux/user/user.schema";
+import { setIsLoggedIn, login } from "../../../redux/user/user.actions";
 import { useDispatch } from "react-redux";
 
 function Login() {
@@ -46,6 +45,8 @@ function Login() {
                                 .catch((error) => {
                                     console.log("Error");
                                 });
+
+                            actions.setSubmitting(false);
                         }}>
                         {() => (
                             <Form>
@@ -62,11 +63,9 @@ function Login() {
                                         id="email"
                                         name="email"
                                     />
-                                    <ErrorMessage
-                                        name="email"
-                                        component="div"
-                                        className="invalid-feedback"
-                                    />
+                                    <div className="invalid-feedback d-block">
+                                        <ErrorMessage name="email" />
+                                    </div>
                                 </div>
                                 <div className="mb-3">
                                     <label
@@ -81,11 +80,9 @@ function Login() {
                                         id="password"
                                         name="password"
                                     />
-                                    <ErrorMessage
-                                        name="password"
-                                        component="div"
-                                        className="invalid-feedback"
-                                    />
+                                    <div className="invalid-feedback d-block">
+                                        <ErrorMessage name="password" />
+                                    </div>
                                 </div>
                                 <div className="d-grid">
                                     <button

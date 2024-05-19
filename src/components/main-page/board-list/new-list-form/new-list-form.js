@@ -1,11 +1,11 @@
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 
 import { useEffect } from "react";
 import {
     setBoard,
     setCurrentBoard,
 } from "../../../../redux/board/board.actions";
-
+import { newListSchema } from "../../../../redux/board/board.schema";
 import { useDispatch, useSelector } from "react-redux";
 import "./new-list-form.css";
 
@@ -47,6 +47,7 @@ function NewList() {
                     initialValues={{
                         listTitle: "",
                     }}
+                    validationSchema={newListSchema}
                     onSubmit={(values, { resetForm }) => {
                         addNewList(values.listTitle);
                         resetForm();
@@ -62,6 +63,9 @@ function NewList() {
                                         name="listTitle"
                                         placeholder="Enter list title..."
                                     />
+                                    <div className="invalid-feedback d-block">
+                                        <ErrorMessage name="listTitle" />
+                                    </div>
                                     <button type="submit" className="btn-save">
                                         Add List
                                     </button>

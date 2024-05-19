@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setUsers } from "../../redux/user/user.actions";
+import { addMemberFormSchema } from "../../redux/user/user.schema";
 
 function AddMemberForm({ setShowNewMemberForm }) {
     const dispatch = useDispatch();
@@ -27,6 +28,7 @@ function AddMemberForm({ setShowNewMemberForm }) {
                     name: "",
                     email: "",
                 }}
+                validationSchema={addMemberFormSchema}
                 onSubmit={(values, { resetForm }) => {
                     console.log(values);
                     dispatch(setUsers(values));
